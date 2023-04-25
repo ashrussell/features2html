@@ -1,8 +1,10 @@
-<h3>{{name}}</h3>
-
-<p class="user-story">{{{background}}}</p>
-
-{{#each scenarios}}
-   <aside>{{sidenote}}</aside>
+<button type="button" class="collapsible">{{name}}</button>
+<div class="content">
+   <p class="user-story">{{background}}</p>
+   <h4>{{rule}}</h4>
+   {{#each scenarios}}
    <pre><code>{{content}}</code></pre>
-{{/each}}
+   <h4>{{rule}}</h4>
+   {{/each}}
+</div>
+</br>

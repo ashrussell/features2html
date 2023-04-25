@@ -2,8 +2,8 @@
 var FILE_ENCODING = 'utf-8';
 var INPUTDIR = 'examples/features';
 var TEMPLATESDIR = 'default/templates';
-var PRODUCTNAME = 'My Product Name';
-var AUTHOR = 'John Doe';
+var PRODUCTNAME = 'Vision Anywhere';
+var AUTHOR = 'Cegedim Healthcare Solutions';
 var OUTPUTFILE = null;
 var LANGUAGE = 'en';
 var BREAKBEFOREWORD = null;
@@ -99,17 +99,13 @@ function create(){
           console.log(e);
         }
       });
-
     }
-
-
   });
 }
 
 function writeOutput(html, outputfile) {
   fs.writeFileSync(outputfile, html, FILE_ENCODING);
   console.log('DONE! HTML was written to %s', outputfile);
-
 }
 
 function parseFeatures(callback) {
@@ -132,6 +128,7 @@ function parseFeatureFile(featureFilename, callback) {
 
   var feature = new Object();
   feature.background = '';
+  feature.rule = '';
   feature.scenarios = [];
   var scenario = new Object();
   scenario.content = '';
@@ -156,9 +153,9 @@ function parseFeatureFile(featureFilename, callback) {
       foundMultirowScenario = true;
       scenariosStarted = true;
 
-      // Handle sidenote
-      if (i18nStringContains(line, 'sidenote')) {
-         scenario.sidenote = line.replace(i18n.t('sidenote'), '');
+      // Handle rule
+      if (i18nStringContains(line, 'Rule')) {
+         scenario.rule = line.replace('#', '')
       } else {
         // Handle scenario content
         if (scenario.content) {
@@ -167,14 +164,21 @@ function parseFeatureFile(featureFilename, callback) {
           scenario.content = line;
         }
       }
-
     }
 
     if (!i18nStringContains(line, 'feature') && !scenariosStarted && featureLineWasFound) {
        // Everything between feature and first scenario goes into feature.background, except background keyword
-       var fixedline = BREAKBEFOREWORD ? line.replace(BREAKBEFOREWORD, '</p><p class="p-after-p">' + BREAKBEFOREWORD) : line;
-       fixedline = fixedline + '<br/>';
-       feature.background = feature.background + ' ' + fixedline.replace(i18n.t('background'), '');
+      var fixedline = BREAKBEFOREWORD ? line.replace(BREAKBEFOREWORD, '</p><p class="p-after-p">' + BREAKBEFOREWORD) : line;
+
+      if (i18nStringContains(fixedline, '# Rule')) {
+        fixedline = line.replace(line, '')
+      }
+
+      feature.background = feature.background + ' ' + fixedline.replace(i18n.t('background'), '');
+      
+      if (i18nStringContains(line, 'Rule')) {
+        feature.rule = line.replace('#', '')
+      }
     }
 
     if (i18nStringContains(line, 'feature')) {
@@ -189,14 +193,12 @@ function parseFeatureFile(featureFilename, callback) {
       }
       callback(null, feature);
   });
-
 }
 
 function lineIndicatesThatANewScenarioBegins(line) {
-  return i18nStringContains(line, 'scenario') || i18nStringContains(line, 'scenario_outline') || i18nStringContains(line, 'sidenote') || i18nStringContains(line, 'background');
+  return i18nStringContains(line, 'scenario') || i18nStringContains(line, 'scenario_outline') || i18nStringContains(line, 'background') || i18nStringContains(line, '@VIS-');
 }
 
 function i18nStringContains(orgstring, i18nkey) {
   return  orgstring.indexOf(i18n.t(i18nkey)) !== -1;
 }
-
