@@ -26,12 +26,12 @@ foreach($file in $outputFeatureFiles){
 	
 	$linkText = $fileName -replace '.html}', ''
 	
-	$f = $file -replace '@{FullName=', '<li><a href ="' -replace '}', "`">$($linkText)</a></li></br>"`
+	$f = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
 	
 	$links += $f
 }
 
-Set-Content -Path .\output\index.html -Value "<html><head><link rel='stylesheet' href= '../default/templates/style.css'></head><body><h1>Vision Anywhere Feature Index</h1><div>$($links)</div></body></html>"
+Set-Content -Path .\output\index.html -Value "<html><head><title>Feature documentation</title><link rel='stylesheet' href= '../default/templates/style.css'></head><header><div>Feature documentation</div></header><body><h1>Feature Index</h1><p>To gain an understanding of product functionality please select a feature</p><div class='contentIndex'>$($links)</div></body></html>"
 
 
 

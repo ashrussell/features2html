@@ -90,14 +90,6 @@ li {
   width: 680px;
 }
 
-a {
-  color: steelblue;
-}
-
-a:not(:hover) {
-  text-decoration: none;
-}
-
 pre, code, textarea {
   font-family: "Menlo", monospace;
 }
@@ -118,6 +110,21 @@ body > pre {
   border-left: solid 2px #9e9898;
   padding-left: 18px;
   margin: 2em 0 2em -20px;
+}
+
+a:link, a:visited {
+  background-color: #eee;
+  color: #424040;
+  padding: 18px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  font-size: 15px;
+}
+
+a:hover, a:active {
+  background-color: #ccc;
 }
 
 .html .value,
@@ -207,6 +214,11 @@ blockquote:after {
   transition: max-height 0.2s ease-out;
 }
 
+.contentIndex {
+  padding: 0 18px;
+  background-color: #d3dfe3;
+}
+
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .active, .collapsible:hover {
   background-color: #ccc;
@@ -223,4 +235,3 @@ blockquote:after {
 .active:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
-
