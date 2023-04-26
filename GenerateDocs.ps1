@@ -11,7 +11,7 @@ foreach($dir in $directories){
 	$d = $dir -replace '@{FullName=', '' -replace '}', ''
 	$o = $d.split('\')[-1]
 	
-	node features2html.js -i $d create -o output\$o.html
+	node features2html.js -p ProductName -a ProductAuthor -i $d create -o output\$o.html
 }
 
 $outputFeatureFiles = Get-ChildItem -Path ".\output" -Recurse -File -Force -ErrorAction SilentlyContinue | Select-Object FullName

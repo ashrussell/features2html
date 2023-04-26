@@ -2,8 +2,8 @@
 var FILE_ENCODING = 'utf-8';
 var INPUTDIR = 'examples/features';
 var TEMPLATESDIR = 'default/templates';
-var PRODUCTNAME = 'Vision Anywhere';
-var AUTHOR = 'Cegedim Healthcare Solutions';
+var PRODUCTNAME = 'My Product Name';
+var AUTHOR = 'John Doe';
 var OUTPUTFILE = null;
 var LANGUAGE = 'en';
 var BREAKBEFOREWORD = null;
