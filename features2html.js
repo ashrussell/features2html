@@ -173,6 +173,10 @@ function parseFeatureFile(featureFilename, callback) {
       if (i18nStringContains(fixedline, '# Rule')) {
         fixedline = line.replace(line, '')
       }
+	  
+	  if (i18nStringContains(fixedline, 'Rule')) {
+        fixedline = line.replace(line, '')
+      }
 
       feature.background = feature.background + ' ' + fixedline.replace(i18n.t('background'), '');
       
