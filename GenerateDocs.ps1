@@ -32,25 +32,65 @@ foreach($dir in $directories)
 	}
 }
 
-# below will need some tweeking to work with nested elements.  i might cry
-$outputFeatureFiles = Get-ChildItem -Path ".\output" -Recurse -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
-
+# below will need some tweeking to work with nested elements.
 New-Item -path .\output\index.html  -ItemType File -Force
 
-$links = @()
+$buttons = @()
+$content = "" 
 
-foreach($file in $outputFeatureFiles){
+$outputFeatureFolders = Get-ChildItem -Path ".\output" -Recurse -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName
+
+foreach($folder in $outputFeatureFolders)
+{	
+	$folderName = Split-Path $folder -leaf
+	$fn = $folderName -replace '}', ""
+	$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
 	
-	$FileName = Split-Path $file -leaf
+	$path = $folder -replace '@{FullName=', "" -replace '}', ""
+
+	$outputFeatureFiles = Get-ChildItem -Path $($path) -Recurse -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
+
+	$content = "" # reset
 	
-	$linkText = $fileName -replace '.html}', ''
-	
-	$f = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
-	
-	$links += $f
+	foreach($file in $outputFeatureFiles)
+	{
+		$fileName = Split-Path $file -leaf
+		$linkText = $fileName -replace '.html}', ''
+		$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+
+		$content = $button + $link
+
+		if ($file -eq $outputFeatureFiles[-1]) 
+		{
+			$content + "</div>" 
+		}
+	}
+
+	$buttons += $content
 }
 
-Set-Content -Path .\output\index.html -Value "<html><head><title>Feature documentation</title><link rel='stylesheet' href= '../default/templates/style.css'></head><header><div>Feature documentation</div></header><body><h1>Feature Index</h1><p>To gain an understanding of product functionality please select a feature</p><div class='contentIndex'>$($links)</div></body></html>"
+Set-Content -Path .\output\index.html -Value "<html><head><title>Feature documentation</title><link rel='stylesheet' href= '../default/templates/style.css'></head><header>
+<div>Feature documentation</div></header>
+<body><h1>Feature Index</h1>
+<p>To gain an understanding of product functionality please select a feature</p>
+<div class='contentIndex'>$($buttons)</div> 
+<script>
+var coll = document.getElementsByClassName('collapsible');
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener('click', function () {
+	this.classList.toggle('active');
+	var content = this.nextElementSibling;
+	if (content.style.maxHeight) {
+	  content.style.maxHeight = null;
+	} else {
+	  content.style.maxHeight = content.scrollHeight + 'px';
+	}
+  });
+}
+</script>
+</body>
+</html>"
 
 
 
