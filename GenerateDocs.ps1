@@ -62,14 +62,14 @@ foreach($folder in $outputFeatureFolders)
 
 		if ($file -eq $outputFeatureFiles[-1]) 
 		{
-			$content + "</div>" 
+			$content += "</div>" 
 		}
 	}
 
 	$buttons += $content
 }
 
-Set-Content -Path .\output\index.html -Value "<html><head><title>Feature documentation</title><link rel='stylesheet' href= '../default/templates/style.css'></head><header>
+$html = "<html><head><title>Feature documentation</title><link rel='stylesheet' href= '../default/templates/style.css'></head><header>
 <div>Feature documentation</div></header>
 <body><h1>Feature Index</h1>
 <p>To gain an understanding of product functionality please select a feature</p>
@@ -93,5 +93,5 @@ for (i = 0; i < coll.length; i++) {
 </html>"
 
 
-
+Set-Content -Path .\output\index.html -Value $html
 
