@@ -9,13 +9,30 @@ if(Test-Path .\output)
 
 New-Item -path .\output  -ItemType Directory
 
-foreach($dir in $directories){
+foreach($dir in $directories)
+{
 	$d = $dir -replace '@{FullName=', '' -replace '}', ''
-	$o = $d.split('\')[-1]
-	
-	node features2html.js -p $productName -a $companyName -i $d create -o output\$o.html
+	$parentDir = (Get-Item $d).Parent
+
+	if($parentDir.Name -eq "features")
+	{
+		# handle features, example structure features\featureNameFolder\featurefile.feature
+		$o = $d.split('\')[-1]
+		New-Item -path .\output\$o  -ItemType Directory
+
+		node features2html.js -p $productName -a $companyName -i $d create -o output\$o\$o.html
+	}
+	else
+	{
+		# handle nested features, sometimes file structures can go something like: features\featureNameFolder\specificPartOfFeatureFolder\featurefile.feature
+		$o = $d.split('\')[-1]
+		New-Item -path .\output\$parentDir\$o  -ItemType Directory
+
+		node features2html.js -p $productName -a $companyName -i $d create -o output\$parentDir\$o\$o.html
+	}
 }
 
+# below will need some tweeking to work with nested elements.  i might cry
 $outputFeatureFiles = Get-ChildItem -Path ".\output" -Recurse -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
 
 New-Item -path .\output\index.html  -ItemType File -Force
