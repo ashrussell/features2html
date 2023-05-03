@@ -119,7 +119,7 @@ a:link, a:visited {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  width: 100%;
+  width: 96%;
   font-size: 15px;
 }
 
@@ -234,4 +234,29 @@ blockquote:after {
 
 .active:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
+}
+
+.collapsible2 {
+  background-color: #eee;
+  color: #424040;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible2:hover {
+  background-color: #ccc;
+}
+
+.collapsible2:after {
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+  margin-left: 5px;
 }

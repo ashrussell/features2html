@@ -1,6 +1,7 @@
 param ([Parameter(Mandatory)]$pathToFeatureFiles, [Parameter(Mandatory)]$productName, [Parameter(Mandatory)]$companyName)
 
 $directories = Get-ChildItem -Path $pathToFeatureFiles  -Recurse -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName
+$mainDir = "features" # default to features
 
 if(Test-Path .\output)
 {
@@ -14,7 +15,7 @@ foreach($dir in $directories)
 	$d = $dir -replace '@{FullName=', '' -replace '}', ''
 	$parentDir = (Get-Item $d).Parent
 
-	if($parentDir.Name -eq "features")
+	if($parentDir.Name -eq $mainDir)
 	{
 		# handle features, example structure features\featureNameFolder\featurefile.feature
 		$o = $d.split('\')[-1]
@@ -44,25 +45,54 @@ foreach($folder in $outputFeatureFolders)
 {	
 	$folderName = Split-Path $folder -leaf
 	$fn = $folderName -replace '}', ""
-	$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
-	
-	$path = $folder -replace '@{FullName=', "" -replace '}', ""
+	$f = $folder -replace '@{FullName=', '' -replace '}', ''
 
-	$outputFeatureFiles = Get-ChildItem -Path $($path) -Recurse -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
+	$parentDir = (Get-Item $f).Parent
 
-	$content = "" # reset
-	
-	foreach($file in $outputFeatureFiles)
+	if($parentDir.Name -eq "output")
 	{
-		$fileName = Split-Path $file -leaf
-		$linkText = $fileName -replace '.html}', ''
-		$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+		$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
+	
+		$path = $folder -replace '@{FullName=', "" -replace '}', ""
 
-		$content = $button + $link
-
-		if ($file -eq $outputFeatureFiles[-1]) 
+		$outputFeatureFiles = Get-ChildItem -Path $($path) -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
+		
+		foreach($file in $outputFeatureFiles)
 		{
-			$content += "</div>" 
+			$fileName = Split-Path $file -leaf
+			$linkText = $fileName -replace '.html}', ''
+			$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+
+			$content = $button + $link
+
+			$hasAnySubdir = (Get-ChildItem -Directory $f).Count
+			
+			if ($file -eq $outputFeatureFiles[-1] -And $hasAnySubdir -eq 0) 
+			{
+				$content += "</div>" 
+			}
+		}
+	}
+	else
+	{
+		$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
+	
+		$path = $folder -replace '@{FullName=', "" -replace '}', ""
+
+		$outputFeatureFiles = Get-ChildItem -Path $($path) -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
+		
+		foreach($file in $outputFeatureFiles)
+		{
+			$fileName = Split-Path $file -leaf
+			$linkText = $fileName -replace '.html}', ''
+			$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+
+			$content = $button + $link
+
+			if ($file -eq $outputFeatureFiles[-1]) 
+			{
+				$content += "</div>" 
+			}
 		}
 	}
 
@@ -89,7 +119,6 @@ for (i = 0; i < coll.length; i++) {
   });
 }
 </script>
-</body>
 </html>"
 
 
