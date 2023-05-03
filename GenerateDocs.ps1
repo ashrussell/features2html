@@ -75,7 +75,7 @@ foreach($folder in $outputFeatureFolders)
 	}
 	else
 	{
-		$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
+		$button = "<button type='button' class='collapsible2'>$($fn)</button><div class='content2'>"
 	
 		$path = $folder -replace '@{FullName=', "" -replace '}', ""
 
@@ -106,6 +106,22 @@ $html = "<html><head><title>Feature documentation</title><link rel='stylesheet' 
 <div class='contentIndex'>$($buttons)</div> 
 <script>
 var coll = document.getElementsByClassName('collapsible');
+var i;
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener('click', function () {
+	this.classList.toggle('active');
+	var content = this.nextElementSibling;
+	if (content.style.maxHeight) {
+	  content.style.maxHeight = null;
+	} else {
+	  content.style.maxHeight = content.scrollHeight + 'px';
+	}
+  });
+}
+</script>
+
+<script>
+var coll = document.getElementsByClassName('collapsible2');
 var i;
 for (i = 0; i < coll.length; i++) {
   coll[i].addEventListener('click', function () {

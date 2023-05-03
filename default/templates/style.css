@@ -165,33 +165,15 @@ svg {
   shape-rendering: crispEdges;
 }
 
-sup, sub {
-  line-height: 0;
-}
-
-q:before,
-blockquote:before {
-  content: "“";
-}
-
-q:after,
-blockquote:after {
-  content: "”";
-}
-
-blockquote:before {
-  position: absolute;
-  left: 2em;
-}
-
-blockquote:after {
-  position: absolute;
-}
-
 .p-after-p {
     margin-top: -0.7em;
 }
 
+.contentIndex {
+  padding: 0 18px;
+  background-color: #d3dfe3;
+  margin: auto;
+}
 
 /* Style the button that is used to open and close the collapsible content */
 .collapsible {
@@ -204,19 +186,6 @@ blockquote:after {
   text-align: left;
   outline: none;
   font-size: 15px;
-}
-
-.content {
-  padding: 0 18px;
-  background-color: white;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-}
-
-.contentIndex {
-  padding: 0 18px;
-  background-color: #d3dfe3;
 }
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
@@ -236,6 +205,22 @@ blockquote:after {
   content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
 
+.content {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.content2 {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  transition: max-height 0.2s ease-out;
+}
+
+/* Style the button that is used to open and close the collapsible content */
 .collapsible2 {
   background-color: #eee;
   color: #424040;
@@ -248,6 +233,7 @@ blockquote:after {
   font-size: 15px;
 }
 
+
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .active, .collapsible2:hover {
   background-color: #ccc;
@@ -259,4 +245,8 @@ blockquote:after {
   color: white;
   float: right;
   margin-left: 5px;
+}
+
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
 }
