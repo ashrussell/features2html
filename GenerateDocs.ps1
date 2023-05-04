@@ -10,6 +10,22 @@ if(Test-Path .\output)
 
 New-Item -path .\output  -ItemType Directory
 
+## handle feature files in main feature folder
+$rootFeatureFiles = (Get-ChildItem -Path $pathToFeatureFiles -force | Where-Object Extension -in ('.feature') | Measure-Object).Count
+
+if(!$rootFeatureFiles -eq 0)
+{
+	$files = Get-ChildItem -Path $($pathToFeatureFiles) -File -Force -ErrorAction SilentlyContinue | Select-Object Name
+	
+	foreach($file in $files)
+	{
+		$fileName = $file -replace '@{Name=', "" -replace '.feature', "" -replace '}', ""
+
+		node features2html.js -p $productName -a $companyName create -o output\$fileName.html
+	}
+}
+
+## handle feature files in directories
 foreach($dir in $directories)
 {
 	$d = $dir -replace '@{FullName=', '' -replace '}', ''
@@ -33,12 +49,31 @@ foreach($dir in $directories)
 	}
 }
 
-# below will need some tweeking to work with nested elements.
-New-Item -path .\output\index.html  -ItemType File -Force
+### files to HTML elements ###
 
 $buttons = @()
 $content = "" 
 
+## handle feature files in main output folder
+$outputFeatures = Get-ChildItem -Path ".\output" -File -Force -ErrorAction SilentlyContinue | Select-Object Name
+
+if(!$outputFeatures -eq 0)
+{
+	$files = Get-ChildItem -Path ".\output" -File -Force -ErrorAction SilentlyContinue | Select-Object Name
+	
+	foreach($file in $files)
+	{
+		$fileName = Split-Path $file -leaf
+		$linkText = $fileName -replace '.html}', '' -replace '@{Name=', ''
+		$link = $file -replace '@{Name=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+
+		$content += $link
+	}
+
+	$buttons += $content
+}
+
+## handle feature files in folders
 $outputFeatureFolders = Get-ChildItem -Path ".\output" -Recurse -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName
 
 foreach($folder in $outputFeatureFolders)
@@ -99,6 +134,10 @@ foreach($folder in $outputFeatureFolders)
 	$buttons += $content
 }
 
+### create index page for all of our feature files to be displayed
+
+New-Item -path .\output\index.html  -ItemType File -Force
+
 $html = "<html><head><title>Feature documentation</title><link rel='stylesheet' href= '../default/templates/style.css'></head><header>
 <div>Feature documentation</div></header>
 <body><h1>Feature Index</h1>
@@ -136,7 +175,6 @@ for (i = 0; i < coll.length; i++) {
 }
 </script>
 </html>"
-
 
 Set-Content -Path .\output\index.html -Value $html
 
