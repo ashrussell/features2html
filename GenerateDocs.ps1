@@ -21,7 +21,7 @@ if(!$rootFeatureFiles -eq 0)
 	{
 		$fileName = $file -replace '@{Name=', "" -replace '.feature', "" -replace '}', ""
 
-		node features2html.js -p $productName -a $companyName create -o output\$fileName.html
+		node features2html.js -p $productName -a $companyName create -i $pathToFeatureFiles -o output\$fileName.html
 	}
 }
 
