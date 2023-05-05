@@ -127,6 +127,7 @@ function parseFeatures(callback) {
 function parseFeatureFile(featureFilename, callback) {
 
   var feature = new Object();
+  feature.featurepath = ''
   feature.background = '';
   feature.rule = '';
   feature.scenarios = [];
@@ -138,6 +139,8 @@ function parseFeatureFile(featureFilename, callback) {
   var scenariosStarted = false;
 
   linereader.eachLine(featureFilename, function(line) {
+
+    feature.featurepath = featureFilename;
 
     if (lineIndicatesThatANewScenarioBegins(line) && foundMultirowScenario) {
       // new scenario found. start parsing new scenario
