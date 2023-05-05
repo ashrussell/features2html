@@ -50,88 +50,90 @@ foreach($dir in $directories)
 }
 
 ### files to HTML elements ###
-
-$buttons = @()
 $content = "" 
 
 ## handle feature files in main output folder
-$outputFeatures = Get-ChildItem -Path ".\output" -File -Force -ErrorAction SilentlyContinue | Select-Object Name
+$mainOutputFeatures = Get-ChildItem -Path ".\output" -File -Force -ErrorAction SilentlyContinue | Select-Object Name
 
-if(!$outputFeatures -eq 0)
+if(!$mainOutputFeatures -eq 0)
 {
-	$files = Get-ChildItem -Path ".\output" -File -Force -ErrorAction SilentlyContinue | Select-Object Name
+	$mainOutputFiles = Get-ChildItem -Path ".\output" -File -Force -ErrorAction SilentlyContinue | Select-Object Name
 	
-	foreach($file in $files)
+	foreach($outputFeatureFile in $mainOutputFiles)
 	{
-		$fileName = Split-Path $file -leaf
-		$linkText = $fileName -replace '.html}', '' -replace '@{Name=', ''
-		$link = $file -replace '@{Name=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+		$mainOutputFileName = Split-Path $outputFeatureFile -leaf
+		$mainOutputFileLinkText = $mainOutputFileName -replace '.html}', '' -replace '@{Name=', ''
+		$mainOutputLink = $outputFeatureFile -replace '@{Name=', '<a href ="' -replace '}', "`">$($mainOutputFileLinkText)</a></br></br>"`
 
-		$content += $link
+		$content += $mainOutputLink
 	}
-
-	$buttons += $content
 }
 
 ## handle feature files in folders
-$outputFeatureFolders = Get-ChildItem -Path ".\output" -Recurse -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName
+$outputFeatureFolders = Get-ChildItem -Path ".\output" -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName
 
 foreach($folder in $outputFeatureFolders)
 {	
 	$folderName = Split-Path $folder -leaf
 	$fn = $folderName -replace '}', ""
 	$f = $folder -replace '@{FullName=', '' -replace '}', ''
-
-	$parentDir = (Get-Item $f).Parent
-
-	if($parentDir.Name -eq "output")
-	{
-		$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
+	$hasAnySubdir = Get-ChildItem -Path $f -Directory -Force -ErrorAction SilentlyContinue | Select-Object FullName
 	
-		$path = $folder -replace '@{FullName=', "" -replace '}', ""
+	Write-Host 'Working in - ' $folderName
+	Write-Host $folderName 'has' $hasAnySubdir.count 'subfolders'
 
-		$outputFeatureFiles = Get-ChildItem -Path $($path) -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
-		
-		foreach($file in $outputFeatureFiles)
+	# create main folder button
+	$button = "<button type='button' class='collapsible'>$($fn)</button><div class='content'>"
+	$content += $button
+
+	#get feature files in that folder
+	$path = $folder -replace '@{FullName=', "" -replace '}', ""
+	$outputFeatureFiles = Get-ChildItem -Path $($path) -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
+	
+	foreach($file in $outputFeatureFiles)
+	{
+		$fileName = Split-Path $file -leaf
+		$linkText = $fileName -replace '.html}', ''
+		$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+
+		$content += $link
+	}
+
+	if($hasAnySubdir.Count -gt 0)
+	{
+		foreach($sub in $hasAnySubdir)
 		{
-			$fileName = Split-Path $file -leaf
-			$linkText = $fileName -replace '.html}', ''
-			$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+			$subName = Split-Path $sub -leaf
+			$sn = $subName -replace '}', ""
+			$sd = $sub -replace '@{FullName=', '' -replace '}', ''
 
-			$content = $button + $link
+			Write-Host 'Working in - ' $sn
 
-			$hasAnySubdir = (Get-ChildItem -Directory $f).Count
-			
-			if ($file -eq $outputFeatureFiles[-1] -And $hasAnySubdir -eq 0) 
+			$subButton = "<button type='button' class='collapsible2'>$($sn)</button><div class='content2'>"
+
+			$content += $subButton
+
+			$subOutputFeatureFiles = Get-ChildItem -Path $($sd) -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
+		
+			foreach($subFile in $subOutputFeatureFiles)
 			{
-				$content += "</div>" 
+				$subFileName = Split-Path $subFile -leaf
+				$subLinkText = $subFileName -replace '.html}', ''
+				$subLink = $subFile -replace '@{FullName=', '<a href ="' -replace '}', "`">$($subLinkText)</a></br></br>"`
+
+				$content += $subLink
+
+				if ($file -eq $outputFeatureFiles[-1]) 
+				{
+					$content += "</div>" 
+				}
 			}
-		}
+		}	
 	}
 	else
 	{
-		$button = "<button type='button' class='collapsible2'>$($fn)</button><div class='content2'>"
-	
-		$path = $folder -replace '@{FullName=', "" -replace '}', ""
-
-		$outputFeatureFiles = Get-ChildItem -Path $($path) -File -Force -ErrorAction SilentlyContinue | Select-Object FullName
-		
-		foreach($file in $outputFeatureFiles)
-		{
-			$fileName = Split-Path $file -leaf
-			$linkText = $fileName -replace '.html}', ''
-			$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
-
-			$content = $button + $link
-
-			if ($file -eq $outputFeatureFiles[-1]) 
-			{
-				$content += "</div>" 
-			}
-		}
+		$content += "</div>" 				
 	}
-
-	$buttons += $content
 }
 
 ### create index page for all of our feature files to be displayed
@@ -142,7 +144,7 @@ $html = "<html><head><title>Feature documentation</title><link rel='stylesheet' 
 <div>Feature documentation</div></header>
 <body><h1>Feature Index</h1>
 <p>To gain an understanding of product functionality please select a feature</p>
-<div class='contentIndex'>$($buttons)</div> 
+<div class='contentIndex'>$($content)</div> 
 <script>
 var coll = document.getElementsByClassName('collapsible');
 var i;
