@@ -15,7 +15,7 @@ $rootFeatureFiles = (Get-ChildItem -Path $pathToFeatureFiles -force | Where-Obje
 
 if(!$rootFeatureFiles -eq 0)
 {
-	$files = Get-ChildItem -Path $($pathToFeatureFiles) -File -Force -ErrorAction SilentlyContinue | Select-Object Name
+	$files = Get-ChildItem -Path $($pathToFeatureFiles) -File -Force | Where-Object Extension -in ('.feature') -ErrorAction SilentlyContinue | Select-Object Name
 	
 	foreach($file in $files)
 	{
@@ -37,7 +37,12 @@ foreach($dir in $directories)
 		$o = $d.split('\')[-1]
 		New-Item -path .\output\$o  -ItemType Directory
 
-		node features2html.js -p $productName -a $companyName -i $d create -o output\$o\$o.html
+		$file = (Get-ChildItem -Path $d -force | Where-Object Extension -in ('.feature') | Measure-Object).Count
+
+		if(!$file -eq 0)
+		{
+			node features2html.js -p $productName -a $companyName -i $d create -o output\$o\$o.html
+		}		
 	}
 	else
 	{
@@ -45,7 +50,12 @@ foreach($dir in $directories)
 		$o = $d.split('\')[-1]
 		New-Item -path .\output\$parentDir\$o  -ItemType Directory
 
-		node features2html.js -p $productName -a $companyName -i $d create -o output\$parentDir\$o\$o.html
+		$file = (Get-ChildItem -Path $d -force | Where-Object Extension -in ('.feature') | Measure-Object).Count
+
+		if(!$file -eq 0)
+		{
+			node features2html.js -p $productName -a $companyName -i $d create -o output\$parentDir\$o\$o.html
+		}	
 	}
 }
 
