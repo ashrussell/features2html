@@ -131,7 +131,7 @@ foreach($folder in $outputFeatureFolders)
 
 			$content += $subLink
 
-			if ($file -eq $outputFeatureFiles[-1]) 
+			if ($subFile -eq $subOutputFeatureFiles[-1]) 
 			{
 				$content += "</div>" 
 			}
