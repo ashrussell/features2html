@@ -104,7 +104,7 @@ foreach($folder in $outputFeatureFolders)
 	{
 		$fileName = Split-Path $file -leaf
 		$linkText = $fileName -replace '.html}', ''
-		$link = $file -replace '@{FullName=', '<a href ="' -replace '}', "`">$($linkText)</a></br></br>"`
+		$link = "<a href ='$($fn)\$($linkText).html'>$($linkText)</a></br></br>"
 
 		$content += $link
 	}
@@ -127,7 +127,7 @@ foreach($folder in $outputFeatureFolders)
 		{
 			$subFileName = Split-Path $subFile -leaf
 			$subLinkText = $subFileName -replace '.html}', ''
-			$subLink = $subFile -replace '@{FullName=', '<a href ="' -replace '}', "`">$($subLinkText)</a></br></br>"`
+			$subLink = "<a href ='$($fn)\$($sn)\$($subLinkText).html'>$($subLinkText)</a></br></br>"
 
 			$content += $subLink
 
