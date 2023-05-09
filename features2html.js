@@ -203,7 +203,7 @@ function parseFeatureFile(featureFilename, callback) {
 }
 
 function lineIndicatesThatANewScenarioBegins(line) {
-  return i18nStringContains(line, 'scenario') || i18nStringContains(line, 'scenario_outline') || i18nStringContains(line, 'background') || i18nStringContains(line, '@VIS-');
+  return i18nStringContains(line, 'scenario') || i18nStringContains(line, 'scenario_outline') || i18nStringContains(line, 'background') || i18nStringContains(line, '@VIS-') || i18nStringContains(line, '@Ignore');
 }
 
 function i18nStringContains(orgstring, i18nkey) {
